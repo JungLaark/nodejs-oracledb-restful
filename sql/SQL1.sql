@@ -1,0 +1,622 @@
+
+
+CREATE TABLE ALI_WAVFILE_TBL(
+	FILE_KEY VARCHAR2(40) PRIMARY KEY,
+    CREATED_DATE VARCHAR2(20)
+);
+
+INSERT INTO ALI_WAVFILE_TBL(FILE_KEY, CREATED_DATE) VALUES('01083952111_211020_133308', '2021-10-20 13:30:08');
+INSERT INTO ALI_WAVFILE_TBL(FILE_KEY, CREATED_DATE) VALUES('01011112222_211022_100522', '2021-10-22 10:05:22');
+
+SELECT * FROM ALI_WAVFILE_TBL;
+
+
+CREATE TABLE ALI_CALLLIST_TBL
+(
+	ID NUMBER PRIMARY KEY,
+    USER_ID VARCHAR(64) NOT NULL,
+    FILE_KEY VARCHAR2(40) NOT NULL,
+	CALL_DATE VARCHAR2(15),
+	PHONE_NUMBER VARCHAR2(12),
+    CONSTRAINT FK_CALLLIST_FILE_KEY FOREIGN KEY(FILE_KEY) REFERENCES ALI_WAVFILE_TBL(FILE_KEY) ON DELETE CASCADE
+
+);
+
+CREATE SEQUENCE CALLlIST_ID START WITH 1 INCREMENT BY 1 MAXVALUE 1000 CYCLE NOCACHE;
+
+INSERT INTO ALI_CALLLIST_TBL(ID, USER_ID, FILE_KEY, CALL_DATE, PHONE_NUMBER) VALUES(CALLLIST_ID.NEXTVAL, 'admin', '01000001111_211020_133308', '211020_133308', '01000001111');
+INSERT INTO ALI_CALLLIST_TBL(ID, USER_ID, FILE_KEY, CALL_DATE, PHONE_NUMBER, INSERTED_DATE, DURATION) VALUES(CALLLIST_ID.NEXTVAL, 'admin', '01011112222_211022_100522', TO_DATE('211022100522', 'YYMMDDHHMISS'), '01011112222', (SELECT SYSDATE FROM DUAL), 60);
+
+INSERT INTO ALI_CALLLIST_TBL(ID, USER_ID, FILE_KEY, CALL_DATE, PHONE_NUMBER) 
+VALUES(CALLLIST_ID.NEXTVAL, 'admin', '01084720328_20210903101703', TO_DATE('20210903101703', 'YYMMDDHHMISS'), '01084720328');
+
+INSERT INTO ALI_CALLLIST_TBL(ID, USER_ID, FILE_KEY, CALL_DATE, PHONE_NUMBER) 
+VALUES(CALLLIST_ID.NEXTVAL, 'admin', '01084720328_20210903115950', TO_DATE('20210903115950', 'YYMMDDHHMISS'), '01084720328');
+
+INSERT INTO ALI_CALLLIST_TBL(ID, USER_ID, FILE_KEY, CALL_DATE, PHONE_NUMBER) 
+VALUES(CALLLIST_ID.NEXTVAL, 'admin', '01084720328_20210903150914', TO_DATE('20210903150924', 'YYMMDDHHMISS'), '01084720328');
+
+
+
+SELECT * FROM ALI_CALLLIST_TBL;
+
+COMMIT;
+
+CREATE TABLE ALI_STT_RESULT_TBL(
+	ID NUMBER(10) PRIMARY KEY,
+    FILE_KEY VARCHAR2(40) NOT NULL,
+    WORD_START NUMBER(10,2),
+    WORD_LENGTH NUMBER(10,2),
+    WORD VARCHAR(20),
+    CONSTRAINT FK_STT_FILE_KEY FOREIGN KEY(FILE_KEY) REFERENCES ALI_WAVFILE_TBL(FILE_KEY) ON DELETE CASCADE
+);
+
+CREATE SEQUENCE STT_RESULT_ID START WITH 1 INCREMENT BY 1 MAXVALUE 1000 CYCLE NOCACHE;
+
+INSERT INTO ALI_STT_RESULT_TBL(ID,  FILE_KEY, WORD_START, WORD_LENGTH, WORD, INSERTED_DATE)
+VALUES(STT_RESULT_ID.NEXTVAL, '01083952111_211020_133308', 0.48, 0.51, '안녕하세요 ', (SELECT SYSDATE FROM DUAL));
+
+SELECT * FROM ALI_STT_RESULT_TBL;
+
+
+SELECT * FROM ALI_STT_RESULT_TBL WHERE FILE_KEY = '01083952111_211020_133308';
+
+COMMIT;
+
+
+SELECT * FROM ALI_USER_TBL;
+SELECT * FROM ALI_WAVFILE_TBL;
+SELECT * FROM ALI_CALLLIST_TBL;
+SELECT * FROM ALI_STT_RESULT_TBL;
+SELECT * FROM ALI_NOTE_TBL;
+
+
+
+SELECT * FROM ALI_CALLLIST_TBL;
+SELECT * FROM ALI_WAVFILE_TBL;
+
+INSERT INTO ALI_CALLLIST_TBL(ID, USER_ID, FILE_KEY, CALL_DATE, PHONE_NUMBER)
+VALUES ( CALLLIST_ID.NEXTVAL,
+            'admin',
+            (SELECT FILE_KEY FROM ALI_WAVFILE_TBL WHERE FILE_KEY = '01000001111'|| '_' || '211020_133308'),
+            '211020_133308',
+            '01000001111');
+            
+            
+    INSERT INTO ALI_CALLLIST_TBL(ID, USER_ID, FILE_KEY, CALL_DATE, PHONE_NUMBER)
+      VALUES(
+            CALLLIST_ID.NEXTVAL, 
+            'admin',
+            (SELECT FILE_KEY FROM ALI_WAVFILE_TBL   WHERE FILE_KEY = '01011112222'|| '_' || '211022_100522'),
+            '211022_100522',
+            '01011112222'
+            );
+
+SELECT FILE_KEY FROM ALI_WAVFILE_TBL WHERE FILE_KEY = '01011112222_211022_100522';
+SELECT * FROM ALI_CALLLIST_TBL;
+
+COMMIT;
+
+SELECT TO_CHAR(SYSDATE, 'YYYY-MM-DD HH:MI:SS') FROM DUAL;
+
+SELECT SYSDATE FROM DUAL;
+
+SELECT *  FROM ALI_CALLLIST_TBL;
+
+DELETE FROM ALI_CALLLIST_TBL;
+
+SELECT * FROM ALI_STT_RESULT_TBL;
+SELECT * FROM ALI_WAVFILE_TBL;
+
+
+
+SELECT A.SID
+     , A.SERIAL#
+     , A.STATUS
+  FROM V$SESSION A
+     , V$LOCK B
+     , DBA_OBJECTS C
+ WHERE A.SID         = B.SID
+   AND B.ID1         = C.OBJECT_ID
+   AND B.TYPE        = 'TM'
+   AND C.OBJECT_NAME = 'ALI_CALLLIST_TBL';
+   
+   ALTER SYSTEM KILL SESSION '392, 729';
+;
+
+
+   INSERT INTO ALI_STT_RESULT_TBL(ID, FILE_KEY, WORD_START, WORD_LENGTH, WORD, INSERTED_DATE)
+      VALUES(
+            ALI_COMMON_SEQ.NEXTVAL, 
+            :fileName,
+            :segment_start,
+            :segment_length,
+            :transcript,
+            (SELECT SYSDATE FROM DUAL)
+            ) 
+
+
+SELECT * FROM ALI_WAVFILE_TBL;
+
+SELECT * FROM ALI_STT_RESULT_TBL;
+
+SELECT * FROM ALI_CALLLIST_TBL;
+
+DELETE FROM ALI_WAVFILE_TBL;
+DELETE FROM ALI_STT_RESULT_TBL;
+DELETE FROM ALI_CALLLIST_TBL;
+
+SELECT uc.constraint_name, uc.table_name, ucc.column_name, uc.constraint_type, uc.r_constraint_name
+FROM user_constraints uc, user_cons_columns ucc
+WHERE uc.constraint_name = ucc.constraint_name;
+
+
+SELECT * FROM ALI_WAVFILE_TBL;
+SELECT * FROM ALI_CALLLIST_TBL;
+SELECT * FROM ALI_STT_RESULT_TBL;
+
+DELETE FROM ALI_WAVFILE_TBL;
+DELETE FROM ALI_CALLLIST_TBL;
+DELETE FROM ALI_STT_RESULT_TBL;
+
+
+INSERT INTO ALI_WAVFILE_TBL(FILE_KEY, CREATED_DATE, INSERTED_DATE)
+SELECT '01084720328_20210903150914', '20210903150914', (SELECT SYSDATE FROM DUAL)
+FROM DUAL
+WHERE NOT EXISTS
+(SELECT FILE_KEY, CREATED_DATE, INSERTED_DATE FROM ALI_WAVFILE_TBL
+WHERE FILE_KEY = '01084720328_20210903150914' AND CREATED_DATE = '20210903150914');
+
+      INSERT INTO ALI_CALLLIST_TBL(ID, USER_ID, FILE_KEY, CALL_DATE, PHONE_NUMBER, INSERTED_DATE, DURATION)
+      SELECT CALLLIST_ID.NEXTVAL, 
+             'admin',
+             :fileKey,
+             TO_DATE(:dateString, 'YYYYMMDDHH24MISS'),
+             :numberString,
+             (SELECT SYSDATE FROM DUAL),
+             :duration
+      FROM DUAL 
+      WHERE NOT EXISTS
+      (SELECT ID, USER_ID, FILE_KEY, CALL_DATE, PHONE_NUMBER, INSERTED_DATE, DURATION 
+        FROM ALI_CALLLIST_TBL FROM WHERE FILE_KEY = :fileKey AND DURATION = :duration);
+        
+        
+        
+              INSERT INTO ALI_WAVFILE_TBL(FILE_KEY, CREATED_DATE, INSERTED_DATE)
+      SELECT fileName,
+            :createDate,
+            (SELECT SYSDATE FROM DUAL)
+      FROM DUAL 
+      WHERE NOT EXISTS
+      (SELECT FILE_KEY, CREATED_DATE, INSERTED_DATE 
+      FROM ALI_WAVFILE_TBL WHERE FILE_KEY = :fileName AND CREATED_DATE = :createDate);
+
+
+
+
+
+
+
+SELECT * FROM ALI_WAVFILE_TBL;
+SELECT * FROM ALI_CALLLIST_TBL;
+SELECT * FROM ALI_STT_RESULT_TBL ORDER BY INSERTED_DATE;
+
+SELECT * FROM ALI_CALLLIST_TBL
+WHERE FILE_KEY  LIKE '%01083952111_2021102616%';
+
+
+DELETE FROM ALI_WAVFILE_TBL;
+DELETE FROM ALI_CALLLIST_TBL;
+DELETE FROM ALI_STT_RESULT_TBL;
+DROP TABLE ALI_STT_RESULT_TBL;
+
+CREATE TABLE ALI_NOTE.ALI_STT_RESULT_TBL (
+  ID               NUMBER(10)        NOT NULL, 
+  FILE_KEY         VARCHAR2(100)     NOT NULL,
+  SPEAKER NUMBER NOT NULL, 
+  WORD_START       NUMBER(10, 2)         NULL, 
+  WORD_LENGTH      NUMBER(10, 2)         NULL, 
+  WORD             VARCHAR2(100)         NULL, 
+  INSERTED_DATE    DATE                  NULL
+);
+
+
+INSERT INTO ALI_WAVFILE_TBL(FILE_KEY, CREATED_DATE, INSERTED_DATE)
+SELECT '01084720328_20210903150914', '20210903150914', (SELECT SYSDATE FROM DUAL)
+FROM DUAL
+WHERE NOT EXISTS
+(SELECT FILE_KEY, CREATED_DATE, INSERTED_DATE FROM ALI_WAVFILE_TBL
+WHERE FILE_KEY = '01084720328_20210903150914' AND CREATED_DATE = '20210903150914');
+
+      INSERT INTO ALI_CALLLIST_TBL(ID, USER_ID, FILE_KEY, CALL_DATE, PHONE_NUMBER, INSERTED_DATE, DURATION)
+      SELECT CALLLIST_ID.NEXTVAL, 
+             'admin',
+             :fileKey,
+             TO_DATE(:dateString, 'YYYYMMDDHH24MISS'),
+             :numberString,
+             (SELECT SYSDATE FROM DUAL),
+             :duration
+      FROM DUAL 
+      WHERE NOT EXISTS
+      (SELECT ID, USER_ID, FILE_KEY, CALL_DATE, PHONE_NUMBER, INSERTED_DATE, DURATION 
+        FROM ALI_CALLLIST_TBL FROM WHERE FILE_KEY = :fileKey AND DURATION = :duration);
+        
+        
+        
+       INSERT INTO ALI_WAVFILE_TBL(FILE_KEY, CREATED_DATE, INSERTED_DATE)
+      SELECT fileName,
+            :createDate,
+            (SELECT SYSDATE FROM DUAL)
+      FROM DUAL 
+      WHERE NOT EXISTS
+      (SELECT FILE_KEY, CREATED_DATE, INSERTED_DATE 
+      FROM ALI_WAVFILE_TBL WHERE FILE_KEY = :fileName AND CREATED_DATE = :createDate);
+      
+      
+      
+      SELECT * FROM ALI_STT_RESULT_TBL ORDER BY FILE_KEY, WORD;
+      
+      DESC ALI_STT_RESULT_TBL;
+      DELETE FROM ALI_STT_RESULT_TBL;
+      INSERT INTO ALI_STT_RESULT_TBL VALUES (ALI_COMMON_SEQ.NEXTVAL, '1', mod(ALI_COMMON_SEQ.CURRVAL, 2), 1, 2, '테스트', SYSDATE); 
+
+
+//####################################################################################################################################
+
+
+/*C 및 U*/      
+INSERT INTO ALI_NOTE_TBL (NOTE_KEY, USER_ID, LOCAL_KEY, DATA, LAST_WORK, IS_FAVORITE, IS_DELETE)
+SELECT ALI_COMMON_SEQ.NEXTVAL,
+          'admin',
+          1,
+          '<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    안녕하세요. 웹 서버가 시작되었습니다. 
+  </body>
+</html>',
+           (SELECT SYSDATE FROM DUAL),
+           'y',
+           'y'
+FROM DUAL 
+WHERE NOT EXISTS
+(SELECT NOTE_KEY, USER_ID, LOCAL_KEY, DATA, LAST_WORK, IS_FAVORITE, IS_DELETE
+ FROM ALI_NOTE_TBL WHERE USER_ID = :USER_ID AND LOCAL_KEY = :LOCAL_KEY);
+ 
+ SELECT * FROM ALI_NOTE_TBL;
+ DESC ALI_NOTE_TBL;
+ /*R*/
+ SELECT NOTE_KEY,
+           USER_ID,
+           LOCAL_KEY,
+           DATA,
+           LAST_WORK,
+           IS_FAVORITE, 
+           IS_DELETE
+ FROM ALI_NOTE_TBL
+ WHERE USER_ID = :USER_ID AND LOCAL_KEY = :LOCAL_KEY;
+ 
+ /*D*/
+ DELETE FROM ALI_NOTE_TBL WHERE USER_ID = :USER_ID AND LOCAL_KEY = :LOCAL_KEY;
+
+ /*C*/      
+INSERT INTO ALI_NOTE_TBL (NOTE_KEY, USER_ID, LOCAL_KEY, DATA, LAST_WORK, IS_FAVORITE, IS_DELETE)
+SELECT ALI_COMMON_SEQ.NEXTVAL,
+          'admin',
+          1,
+          '<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    안녕하세요. 웹 서버가 시작되었습니다. 
+  </body>
+</html>',
+           (SELECT SYSDATE FROM DUAL),
+           'y',
+           'y'
+FROM DUAL 
+WHERE NOT EXISTS
+(SELECT NOTE_KEY, USER_ID, LOCAL_KEY, DATA, LAST_WORK, IS_FAVORITE, IS_DELETE
+ FROM ALI_NOTE_TBL WHERE USER_ID = :USER_ID AND LOCAL_KEY = :LOCAL_KEY);
+ 
+ SELECT * FROM ALI_NOTE_TBL;
+ DESC ALI_NOTE_TBL;
+ /*R*/
+ SELECT NOTE_KEY,
+           USER_ID,
+           LOCAL_KEY,
+           DATA,
+           LAST_WORK,
+           IS_FAVORITE, 
+           IS_DELETE
+ FROM ALI_NOTE_TBL
+ WHERE USER_ID = :USER_ID AND LOCAL_KEY = :LOCAL_KEY;
+ 
+ /*D*/
+ DELETE FROM ALI_NOTE_TBL WHERE USER_ID = :USER_ID AND LOCAL_KEY = :LOCAL_KEY;
+ 
+ /*U*/
+ UPDATE SET VALEU 
+
+##########################################################################################################################
+
+
+
+ INSERT INTO ALI_USER_TBL(USER_KEY,ID, PW, FIRST_NAME, LAST_NAME, CONTACT, EMAIL, GENDER, CERTIFY_CODE, CERTIFY_DATE, CERITYFY_TOKEN)
+VALUES(ALI_COMMON_SEQ.NEXTVAL, 'admin', 'admin', 'admin', 'admin', '010-0000-1111', 'test@sorizava.com', 0, 05, (SELECT SYSDATE FROM DUAL), '토큰')
+
+SELECT * FROM ALI_WAVFILE_TBL ORDER BY CREATED_DATE DESC; 
+ ORDER BY ID DESC;
+SELECT * FROM ALI_STT_RESULT_TBL  ORDER BY file_key desc, word_start asc;
+SELECT * FROM ALI_NOTE_TBL;
+
+
+SELECT * FROM ALI_USER_TBL;
+WHERE ID = 'admin' AND pw = '';
+
+SELECT * FROM ALI_CALLLIST_TBL;
+
+SELECT * FROM ALI_CONTACT_TBL;
+SELECT * FROM ALI_WAVFILE_TBL ORDER BY INSERTED_DATE DESC; 
+SELECT * FROM ALI_CALLLIST_TBL ORDER BY INSERTED_DATE DESC;
+SELECT * FROM ALI_STT_RESULT_TBL ORDER BY INSERTED_DATE DESC;
+SELECT * FROM ALI_NOTE_TBL;
+
+SELECT MAX(CALL_DATE) FROM ALI_CALLLIST_TBL WHERE USER_ID = 'admin';
+
+SELECT * FROM ALI_USER_TBL;
+
+UPDATE  ali_user_tbl SET last_name ='소리자바', FIRST_NAME = '관리자' WHERE ID = 'admin';
+COMMIT;
+
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+SELECT * FROM ALI_WAVFILE_TBL ORDER BY CREATED_DATE DESC; 
+ ORDER BY ID DESC;
+SELECT * FROM ALI_STT_RESULT_TBL  ORDER BY file_key desc, word_start asc;
+SELECT * FROM ALI_NOTE_TBL;
+
+
+SELECT * FROM ALI_USER_TBL;
+WHERE ID = 'admin' AND pw = '';
+
+SELECT * FROM ALI_CALLLIST_TBL;
+
+
+SELECT * FROM ALI_WAVFILE_TBL ORDER BY INSERTED_DATE DESC; 
+SELECT * FROM ALI_CALLLIST_TBL ORDER BY INSERTED_DATE DESC;
+SELECT * FROM ALI_STT_RESULT_TBL ORDER BY INSERTED_DATE DESC;
+
+SELECT * FROM ALI_NOTE_TBL ORDER BY LAST_WORK DESC;
+
+SELECT MAX(CALL_DATE) FROM ALI_CALLLIST_TBL WHERE USER_ID = 'admin';
+
+SELECT * FROM ALI_USER_TBL;
+
+UPDATE  ali_user_tbl SET last_name ='소리자바', FIRST_NAME = '관리자' WHERE ID = 'admin';
+COMMIT;
+
+SELECT * FROM ALI_CALLLIST_TBL ORDER BY INSERTED_DATE DESC;
+SELECT * FROM ALI_STT_RESULT_TBL ORDER BY INSERTED_DATE DESC;
+
+SELECT * FROM ALI_STT_RESULT_TBL ;
+WHERE FILE_KEY IN (SELECT FILE_KEY FROM ALI_CALLLIST_TBL WHERE USER_ID = :USER_ID AND PHONE_NUMBER = :PHONE_NUMBER);
+
+SELECT * FROM ALI_CALLLIST_TBL;
+SELECT FILE_KEY FROM ALI_CALLLIST_TBL WHERE PHONE_NUMBER = '01033220851';
+
+
+SELECT LENGTH(FILE_KEY) FROM ALI_STT_RESULT_TBL;
+
+SELECT COUNT(1) FROM ALI_CALLLIST_TBL A, ALI_STT_RESULT_TBL B WHERE A.FILE_KEY = B.FILE_KEY;
+
+SELECT * FROM ALI_CALLLIST_TBL;
+
+SELECT * FROM ALI_STT_RESULT_TBL WHERE FILE_KEY = 'admin_20211102213043';
+SELECT * FROM ALI_STT_RESULT_TBL WHERE FILE_KEY IN (SELECT FILE_KEY FROM ALI_CALLLIST_TBL WHERE PHONE_NUMBER = '01033220851');
+
+
+
+
+      SELECT CALL_ID AS ID, 
+      PHONE_NUMBER,
+      TO_CHAR(CALL_DATE, 'YYYY-MM-DD HH24:MI:SS') AS CALLDATE,
+      TO_CHAR(CALL_DATE + DURATION/(24*60*60), 'YYYY-MM-DD HH24:MI:SS') AS ENDDATE,
+      DURATION,
+      TYPE,
+      (SELECT COUNT(1) FROM ALI_WAVFILE_TBL WHERE CREATED_DATE BETWEEN CALL_DATE AND CALL_DATE + DURATION/(24*60*60)) FILE_COUNT 
+      FROM ALI_CALLLIST_TBL
+      ORDER BY CALL_DATE;
+     
+     SELECT * FROM ALI_CALLLIST_TBL;
+     SELECT * FROM ALI_WAVFILE_TBL;
+    
+       SELECT FILE_KEY
+       FROM ALI_WAVFILE_TBL 
+       WHERE CREATED_DATE 
+       BETWEEN (SELECT CALL_DATE FROM ALI_CALLLIST_TBL WHERE CALL_ID = 116) 
+           AND (SELECT CALL_DATE + DURATION/(24*60*60) FROM ALI_CALLLIST_TBL WHERE CALL_ID = 116 ) 
+           AND USER_ID = 'admin';
+          
+          SELECT * FROM ALI_CONTACT_TBL;
+          SELECT NAME FROM ALI_CONTACT_TBL WHERE REPLACE(PHONE_NUM, '-', '') = '114';
+         SELECT * FROM ALI_CALLLIST_TBL;
+         
+        SELECT * FROM ALI_CALLLIST_TBL A, ALI_STT_RESULT_TBL B WHERE A.FILE_KEY = B.FILE_KEY;
+         SELECT WORD,  FROM ALI_STT_RESULT_TBL WHERE FILE_KEY IN (SELECT FILE_KEY FROM ALI_CALLLIST_TBL WHERE USER_ID = 'admin' AND PHONE_NUMBER='01033220851');
+        
+        SELECT * FROM ALI_STT_RESULT_TBL;
+
+       --대화방 목록 (param: user_id)
+       SELECT CONTACT,
+	          LAST_DATE,
+	         (SELECT WORD
+				FROM ALI_STT_RESULT_TBL
+				WHERE ID = LAST_ID) LAST_WORD
+        FROM (SELECT NVL((SELECT NAME 
+                            FROM ALI_CONTACT_TBL 
+                           WHERE REPLACE(PHONE_NUM, '-', '') = A.PHONE_NUMBER), A.PHONE_NUMBER) CONTACT,
+		     MAX(A.CALL_DATE) LAST_DATE,
+		     MAX(B.ID) LAST_ID
+	          FROM ALI_CALLLIST_TBL A,	ALI_STT_RESULT_TBL B
+              WHERE A.FILE_KEY = B.FILE_KEY
+		      AND A.USER_ID = 'admin'
+	          GROUP BY PHONE_NUMBER);
+	         
+	         
+          
+    
+
+      
+          SELECT * FROM ALI_CALLLIST_TBL;
+          SELECT * FROM ALI_STT_RESULT_TBL;
+          
+         SELECT A.CALL_DATE,
+                B.WORD,
+                WORD_START,
+                WORD_LENGTH,
+                SPEAKER
+         FROM ALI_CALLLIST_TBL A, ALI_STT_RESULT_TBL B 
+        WHERE A.FILE_KEY = B.FILE_KEY 
+          AND A.PHONE_NUMBER = :1  
+     ORDER BY A.CALL_DATE, WORD_START;
+    
+    SELECT * FROM ALI_CALLLIST_TBL;
+   
+   
+  
+  SELECT * FROM ALI_STT_RESULT_TBL ORDER BY INSERTED_DATE DESC;
+ 
+ DESC 
+ 
+   SELECT CONTACT,
+                 LAST_DATE,
+                (SELECT WORD
+                    FROM ALI_STT_RESULT_TBL
+                    WHERE ID = LAST_ID) LAST_WORD,
+                 PHONE_NUMBER
+          FROM (SELECT NVL((SELECT NAME 
+                        FROM ALI_CONTACT_TBL 
+                       WHERE REPLACE(PHONE_NUM, '-', '') = A.PHONE_NUMBER), A.PHONE_NUMBER) AS CONTACT,
+                      MAX(A.CALL_DATE) AS LAST_DATE,
+                      MAX(B.ID) AS LAST_ID,
+                      A.PHONE_NUMBER
+                FROM ALI_CALLLIST_TBL A,	ALI_STT_RESULT_TBL B
+                WHERE A.FILE_KEY = B.FILE_KEY
+                AND A.USER_ID = 'admin'
+                GROUP BY PHONE_NUMBER);
+               
+               SELECT * FROM ALI_CALLLIST_TBL;
+               SELECT * FROM ALI_STT_RESULT_TBL;
+              
+              
+              
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+              
+       SELECT FILE_KEY 
+       FROM ALI_WAVFILE_TBL 
+       WHERE CREATED_DATE 
+       BETWEEN (SELECT DISTINCT CALL_DATE FROM ALI_CALLLIST_TBL WHERE CALL_ID = 149) 
+           AND (SELECT DISTINCT CALL_DATE + DURATION/(24*60*60) FROM ALI_CALLLIST_TBL WHERE CALL_ID = 149 ) 
+           AND USER_ID = 'admin';
+          
+          
+          
+          SELECT * FROM ALI_CALLLIST_TBL ORDER BY CALL_ID DESC;
+         
+         DELETE FROM ALI_CALLLIST_TBL WHERE CALL_ID IN (SELECT call_id FROM ALI_CALLLIST_TBL WHERE user_id = 'admin' GROUP BY call_id HAVING count(1) > 1);
+         
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+         
+SELECT call_id FROM ALI_CALLLIST_TBL WHERE user_id = 'admin' GROUP BY call_id HAVING count(1) > 1;
+
+DELETE FROM ALI_CALLLIST_TBL 
+WHERE CALL_ID 
+IN (SELECT call_id 
+    FROM ALI_CALLLIST_TBL 
+    WHERE user_id = 'admin' 
+    GROUP BY call_id 
+    HAVING count(1) > 1);
+
+
+WHERE TO_CHAR(CALL_DATE, 'YYYYMMDD') > '20211107' ORDER BY CALL_DATE DESC;
+
+COMMIT;
+
+SELECT * FROM ALI_WAVFILE_TBL WHERE TO_CHAR(CREATED_DATE, 'YYYYMMDD') > '20211107' ORDER BY CREATED_DATE DESC
+--왜 WAV 파일이 몇 개 없는 것인가? 
+
+SELECT * FROM ALI_STT_RESULT_TBL;
+SELECT FILE_KEY FROM ALI_STT_RESULT_TBL GROUP BY FILE_KEY ORDER BY FILE_KEY DESC;
+
+SELECT COUNT(*) FROM ALI_CALLLIST_TBL
+WHERE USER_ID = :USER_ID AND 
+
+
+          
+         
+SELECT * FROM ali_call_list_tbl ORDER BY CALL_DATE DESC; 
+
+SELECT * FROM ALI_STT_RESULT_TBL ORDER BY INSERTED_DATE DESC;
+
+
+ALTER TABLE ali_calllist_tbl (
+    CONSTRAINT ALI_CALLLIST_USER_CALL_KEY PRIMARY KEY (USER_ID, CALL_ID)
+);
+
+ROLLBACK;
+
+
+SELECT * FROM alI_WAVFILE_TBL ORDER BY INSERTED_DATE DESC;
+
+
+#############################################################################################################################################
+
+INSERT INTO ALI_SOCIAL_USER_TBL 
+             (USER_KEY,
+              ID, 
+              PW, 
+              FIRST_NAME, 
+              LAST_NAME, 
+              CONTACT, 
+              EMAIL, 
+              GENDER, 
+              CERTIFY_CODE,
+              CERTIFY_DATE, 
+              CERTIFY_TOKEN, 
+              IMAGE)
+              VALUES
+              (ALI_COMMON_SEQ.NEXTVAL,
+               :googleId,
+               :name,
+               :givenName,
+               :name,
+               '',
+               :email,
+               '',
+               '',
+               sysdate,
+               '',
+               :imgeUrl
+               ) ;
+               
+SELECT * FROM ALI_SOCIAL_USER_TBL;
+COMMIT;
+
+DELETE FROM ALI_SOCIAL_USER_TBL;
